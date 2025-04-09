@@ -1,8 +1,8 @@
-import torch
+#import torch
 from PIL import Image
-import os 
-import config
-from troch.utils.data import Dataset
+import os
+#import config
+from torch.utils.data import Dataset
 import numpy as np
 
 class HorseZebraDataset(Dataset):
@@ -12,7 +12,7 @@ class HorseZebraDataset(Dataset):
 		self.transform = transform
 
 		self.zebra_images = os.listdir(root_zebra)
-		self.horse_images os.listdir(root_horse)
+		self.horse_images = os.listdir(root_horse)
 		self.length_dataset = max(len(self.zebra_images), len(self.horse_images))
 		self.zebra_len = len(self.zebra_images)
 		self.horse_len = len(self.horse_images)
