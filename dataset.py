@@ -30,7 +30,7 @@ class HorseZebraDataset(Dataset):
 		zebra_img = np.array(Image.open(zebra_path).convert("RGB"))
 		horse_img = np.array(Image.open(horse_path).convert("RGB"))
 
-		if self.tarnsform:
+		if self.transform:
 			augmentations = self.transform(image=zebra_img, image0=horse_img)
 			zebra_img = augmentations["image"]
 			horse_img = augmentations["image0"]
