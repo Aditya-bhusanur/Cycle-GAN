@@ -12,7 +12,7 @@ class Block(nn.Module):
     def forward(self, x):
         return self.conv(x)
 
-class Discrimiator(nn.Module):
+class Discriminator(nn.Module):
     def __init__(self, in_channels=3, features=[64, 128, 256,512]):
         super().__init__()
         self.initial = nn.Sequential(
