@@ -1,4 +1,5 @@
 import torch
+import os
 from dataset import HorseZebraDataset
 import sys
 from utils import save_checkpoint, load_checkpoint
@@ -20,7 +21,7 @@ def train_fn(disc_H, disc_Z, gen_Z, gen_H, loader, opt_disc, opt_gen, l1, mse, d
 		zebra = zebra.to(config.DEVICE)
 		horse = horse.to(config.DEVICE)
 
-		with torch.cuda.map.autocast():
+		with torch.cuda.amp.autocast():
 			fake_horse = gen_H(zebra)
 			D_H_real = disc_H(horse)
 			D_H_fake = disc_H(fake_horse.detach())
@@ -73,11 +74,11 @@ def train_fn(disc_H, disc_Z, gen_Z, gen_H, loader, opt_disc, opt_gen, l1, mse, d
 				+ identity_zebra_loss * config.LAMBDA_IDENTITY
 			)
 
-		opt_gen.zerograd()
+		opt_gen.zero_grad()
 		g_sacler.scale(G_loss).backward()
 		g_sacler.step(opt_gen)
 		g_sacler.update()
-
+		os.makedirs("saved_images", exist_ok=True)
 		if idx % 200 == 0:
 			save_image(fake_horse*0.5+0.5, f"saved_images/horse_{idx}.png")
 			save_image(fake_zebra*0.5+0.5, f"saved_images/zebra_{idx}.png")
@@ -98,7 +99,7 @@ def main():
 	opt_gen = optim.Adam(
 		list(gen_Z.parameters()) + list(gen_H.parameters()),
 		lr=config.LEARNING_RATE,
-		brtas=(0.5,0.999),
+		betas=(0.5,0.999),
 	)
 
 	L1 = nn.L1Loss()
@@ -127,7 +128,7 @@ def main():
 	loader = DataLoader(
 		dataset,
 		batch_size=config.BATCH_SIZE,
-		shuffel=True,
+		shuffle=True,
 		num_workers=config.NUM_WORKERS,
 		pin_memory=True
 	)
